@@ -11,7 +11,7 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "debate-academy"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"   # from: npx wrangler d1 create debate-academy
+database_id = "5fed77a6-a96d-4503-8e34-f1673e0b7f17"   # from: npx wrangler d1 create debate-academy
 
 # Optional secrets (until set, the teacher login is Admin / Password123):
 #   npx wrangler secret put admin_user
