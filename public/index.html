@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debate Academy</title>
+<meta name="description" content="Build debate arguments brick by brick and learn to answer rebuttals.">
+<style>
+:root{
+  --ink:#1f2a44; --paper:#f7f2e8; --card:#fff; --line:#e3dac6; --muted:#667089;
+  --gold:#f2a900; --red:#d9482b; --teal:#238b7e; --blue:#3a6ea5; --purple:#7b5ea7;
+  --ok:#1f8a4c; --bad:#c0392b; --radius:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "Avenir Next","Segoe UI","Trebuchet MS",system-ui,sans-serif}
+h1,h2,h3{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.2;margin:.2em 0 .5em}
+h1{font-size:2rem} h2{font-size:1.6rem} h3{font-size:1.2rem}
+p{margin:.5em 0 .8em}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+a{color:var(--blue)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- shell ---------- */
+.topbar{position:sticky;top:0;z-index:20;background:var(--ink);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 16px;flex-wrap:wrap}
+.logo{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;font-size:1.2rem;letter-spacing:.02em;text-decoration:none;color:#fff;white-space:nowrap}
+.logo span{color:var(--gold)}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:thin}
+.nav a{color:#cfd5e6;text-decoration:none;padding:6px 11px;border-radius:999px;font-size:.92rem;white-space:nowrap}
+.nav a:hover{background:rgba(255,255,255,.1)}
+.nav a.on{background:var(--gold);color:var(--ink);font-weight:700}
+.xpchip{display:flex;align-items:center;gap:8px;font-size:.85rem;white-space:nowrap}
+.xpchip .bar{width:84px;height:8px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.xpchip .bar i{display:block;height:100%;background:var(--gold)}
+.xpchip .rank{color:var(--gold);font-weight:700}
+.who{font-size:.85rem;color:#cfd5e6}
+main{max-width:980px;margin:0 auto;padding:22px 16px 80px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 2px 0 rgba(31,42,68,.04)}
+.muted{color:var(--muted)} .small{font-size:.88rem}
+.grid{display:grid;gap:14px}
+.grid.c2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid.c3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+/* ---------- controls ---------- */
+.btn{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700;transition:transform .08s,filter .15s}
+.btn:hover{filter:brightness(1.15)} .btn:active{transform:translateY(1px)}
+.btn.gold{background:var(--gold);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.danger{background:var(--bad)}
+.btn.small{padding:5px 11px;font-size:.85rem;border-radius:8px}
+.btn[disabled]{opacity:.4;cursor:not-allowed;filter:none}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row-actions.between{justify-content:space-between}
+label{display:block;font-weight:700;margin:12px 0 4px;font-size:.92rem}
+input[type=text],input[type=password],input[type=search],select,textarea{width:100%;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
+textarea{min-height:92px;resize:vertical}
+.err{color:var(--bad);font-weight:700;margin-top:10px;min-height:1.2em}
+.tag{display:inline-block;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;color:#fff;background:var(--muted)}
+.tag.prop{background:var(--blue)} .tag.opp{background:var(--red)}
+.tag.ok{background:var(--ok)} .tag.wait{background:var(--muted)}
+
+/* ---------- login ---------- */
+.login-wrap{max-width:440px;margin:7vh auto 0}
+.login-hero{text-align:center;margin-bottom:18px}
+.login-hero .big-logo{font-size:2.6rem;font-family:"Iowan Old Style",Georgia,serif;font-weight:700}
+.login-hero .big-logo span{color:var(--gold);text-shadow:0 1px 0 var(--ink)}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{flex:1;border:2px solid var(--ink);background:transparent;padding:9px;border-radius:10px;font-weight:700;color:var(--ink)}
+.tabs button.on{background:var(--ink);color:#fff}
+
+/* ---------- missions ---------- */
+.mission{display:flex;gap:14px;align-items:flex-start;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-left:8px solid var(--c,var(--ink));border-radius:var(--radius);padding:16px;transition:transform .1s,box-shadow .1s}
+.mission:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(31,42,68,.12)}
+.mission .ic{font-size:2rem;line-height:1}
+.mission h3{margin:0 0 2px}
+.mission p{margin:0;color:var(--muted);font-size:.92rem}
+.mission .st{margin-top:6px;font-size:.8rem;font-weight:800;color:var(--c,var(--ink))}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.badge{display:flex;gap:8px;align-items:center;padding:6px 12px;border-radius:99px;border:2px solid var(--gold);background:#fff8e1;font-weight:700;font-size:.88rem}
+.badge.locked{border-color:var(--line);background:#f1ede2;color:#9aa0b3;filter:grayscale(1)}
+.notice{background:#fff8e1;border:2px solid var(--gold);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.warnbar{background:#fdecea;border:2px solid var(--bad);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.warnbar code{background:#fff;padding:2px 6px;border-radius:6px;display:inline-block;margin:2px 0}
+
+/* ---------- slides / learn ---------- */
+.dots{display:flex;gap:6px;margin-bottom:10px}
+.dot{width:26px;height:6px;border-radius:99px;background:var(--line)}
+.dot.past{background:var(--teal)} .dot.on{background:var(--gold)}
+.big{font-size:1.25rem}
+.callout{background:#eef2fb;border-left:6px solid var(--blue);padding:12px 16px;border-radius:8px;margin:14px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.side{border-radius:12px;padding:6px 16px;color:#fff}
+.side.prop{background:var(--blue)} .side.opp{background:var(--red)}
+.motion-card{position:relative;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:22px 16px 14px;margin:14px 0;font-family:"Iowan Old Style",Georgia,serif;font-size:1.2rem}
+.motion-card .mk{position:absolute;top:-11px;left:14px;background:var(--ink);color:#fff;font:700 .7rem/1 system-ui;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:99px}
+.steps4{padding-left:0;list-style:none;display:grid;gap:8px}
+.steps4 li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.cracks{padding-left:18px;font-size:.94rem}
+.defs{width:100%;border-collapse:collapse;margin:8px 0}
+.defs td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.defs td:first-child{font-weight:800;white-space:nowrap;color:var(--teal)}
+
+/* ---------- bricks ---------- */
+.brick-row{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:10px;margin:8px 0;padding:0;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.08),inset 0 0 0 2px var(--c);color:var(--ink)}
+.brick-row .bl{display:block;background:var(--c);color:var(--on);font-weight:800;letter-spacing:.07em;font-size:.82rem;padding:8px 14px}
+.brick-row .bt{display:none;padding:10px 14px}
+.brick-row.open .bt{display:block}
+.brick-row:not(.open) .bl::after{content:"  · tap to reveal";font-weight:500;opacity:.85;letter-spacing:0;text-transform:none}
+.brick-row .ask{display:block;font-size:.82rem;color:var(--muted);padding:0 14px 10px;font-style:italic}
+.sample-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.sample-head .motion{font-family:"Iowan Old Style",Georgia,serif;font-weight:700}
+
+/* ---------- drills ---------- */
+.q-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.quote{font-size:1.18rem;background:#fff;border-left:6px solid var(--ink);padding:14px 16px;border-radius:8px;margin:12px 0}
+.ctx{font-size:.9rem;color:var(--muted);margin:6px 0}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px}
+.choice{border:0;border-radius:10px;padding:12px 8px;font-weight:800;background:var(--c);color:var(--on);box-shadow:0 3px 0 rgba(0,0,0,.25);transition:transform .08s,opacity .2s}
+.choice:hover:not([disabled]){transform:translateY(-2px)}
+.choice[disabled]{cursor:default}
+.choice.dim{opacity:.3}
+.choice.right{outline:5px solid var(--ok);outline-offset:2px}
+.choice.wrong{outline:5px solid var(--bad);outline-offset:2px}
+.feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-weight:600}
+.feedback.good{background:#e6f5ec;border:2px solid var(--ok)}
+.feedback.bad{background:#fdecea;border:2px solid var(--bad)}
+.feedback p{margin:.3em 0;font-weight:500}
+.placed{display:grid;gap:6px;margin:10px 0}
+.placed .brick-row{margin:0;cursor:default}
+.pool{display:grid;gap:8px;margin-top:12px}
+.pool button{text-align:left;background:#fff;border:2px dashed var(--ink);border-radius:10px;padding:10px 14px;color:var(--ink)}
+.pool button:hover{background:#f1f4fb}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.result{text-align:center}
+.result .score{font-size:3.2rem;font-family:"Iowan Old Style",Georgia,serif;font-weight:700}
+
+/* ---------- workshop ---------- */
+.motion-pick{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;color:var(--ink)}
+.motion-pick:hover{border-color:var(--ink)}
+.motion-pick.on{border-color:var(--ink);background:#eef2fb;box-shadow:inset 6px 0 0 var(--gold)}
+.sidepick{display:flex;gap:10px;margin:8px 0}
+.sidepick button{flex:1;padding:12px;border-radius:10px;border:2px solid var(--ink);background:#fff;font-weight:800;color:var(--ink)}
+.sidepick button.on.prop{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sidepick button.on.opp{background:var(--red);color:#fff;border-color:var(--red)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 6px}
+.chip{font-size:.78rem;background:#f1ede2;border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--muted)}
+.chip.term{background:#e7f3f1;border-color:#b8ddd8;color:var(--teal);font-weight:700}
+.editor{border:2px solid var(--c,var(--line));border-radius:12px;margin:14px 0;overflow:hidden;background:#fff}
+.editor header{background:var(--c);color:var(--on);padding:8px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.editor header b{letter-spacing:.07em}
+.editor header span{font-size:.85rem;opacity:.95}
+.editor .in{padding:10px 14px 12px}
+.editor textarea{border-color:var(--line)}
+.editor .def{font-size:.86rem;color:var(--muted);margin:0 0 6px}
+.checks{font-size:.86rem;margin-top:6px}
+.checks .t{color:var(--bad)} .checks .g{color:var(--ok);font-weight:700}
+.wallviz{display:grid;gap:4px;margin:6px 0 14px;max-width:420px}
+.wrow{display:flex;gap:4px}
+.wrow:nth-child(even){padding-left:22px}
+.wrow i{display:block;height:24px;flex:1;border-radius:4px;background:var(--c);opacity:.2;transition:opacity .3s}
+.wrow.on i{opacity:1}
+.wrow:nth-child(even) i:last-child{flex:.5}
+.preview{background:#fffdf6;border:2px dashed var(--line);border-radius:12px;padding:14px 16px;line-height:1.75}
+.preview mark{background:none;padding:1px 3px;border-radius:4px;box-shadow:inset 0 -3px 0 var(--c)}
+.sticky-save{position:sticky;bottom:0;background:linear-gradient(transparent,var(--paper) 30%);padding:18px 0 4px}
+
+/* ---------- arena ---------- */
+.case{display:block;width:100%;text-align:left;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;border-left:8px solid var(--c)}
+.case:hover{box-shadow:0 6px 16px rgba(31,42,68,.12)}
+.crackpick{display:block;width:100%;text-align:left;border:0;border-radius:10px;margin:8px 0;padding:0;overflow:hidden;background:#fff;box-shadow:inset 0 0 0 2px var(--c);color:var(--ink)}
+.crackpick .bl{display:block;background:var(--c);color:var(--on);font-weight:800;font-size:.8rem;letter-spacing:.07em;padding:7px 14px}
+.crackpick .bt{display:block;padding:10px 14px}
+.crackpick:hover:not([disabled]){box-shadow:inset 0 0 0 4px var(--ink)}
+.crackpick.solid{opacity:.45}
+.crackpick.cracked{box-shadow:inset 0 0 0 5px var(--bad)}
+.crackpick.cracked .bl::after{content:"  💥 the crack"}
+
+/* ---------- tables / admin ---------- */
+table.t{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+table.t th,table.t td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t th{background:#efe9d9;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em}
+table.t tr:last-child td{border-bottom:0}
+table.t tr.click{cursor:pointer} table.t tr.click:hover td{background:#f6f9ff}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:1.15rem;letter-spacing:.14em;background:#fff8e1;border:2px dashed var(--gold);padding:3px 10px;border-radius:8px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;align-items:end}
+.filters>div{min-width:150px;flex:1}
+.stars button{background:none;border:0;font-size:1.6rem;padding:0 2px;color:#c9c2ae}
+.stars button.on{color:var(--gold)}
+.scroll-x{overflow-x:auto}
+
+/* ---------- rebuttals ---------- */
+.starter{display:inline-block;background:var(--c);color:var(--on);font-weight:800;padding:2px 10px;border-radius:99px;font-size:.88rem;white-space:nowrap}
+.famhead{background:var(--c);color:var(--on);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+.famhead .fs{font-family:"Iowan Old Style",Georgia,serif;font-size:1.5rem;font-weight:700}
+.famcard{background:#fff;border:1px solid var(--line);border-left:8px solid var(--c);border-radius:12px;padding:12px 16px;margin:10px 0}
+.famcard h3{margin:0 0 2px}
+.rbcard{background:#fff;border:1px solid var(--line);border-left:8px solid var(--c);border-radius:12px;padding:10px 14px;margin:8px 0}
+.rbcard p{margin:.2em 0 .5em}
+.say{background:#f4f1e8;border-radius:8px;padding:8px 12px;margin:6px 0}
+.say span.l{font-weight:800;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.say.you{background:#eef6f4}
+.say mark{background:none;font-weight:800;box-shadow:inset 0 -3px 0 var(--c);padding:0 2px}
+.starterpick{display:block;width:100%;text-align:left;border:0;border-radius:12px;padding:12px 16px;margin:8px 0;background:var(--c);color:var(--on);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.starterpick:hover{filter:brightness(1.08)}
+.starterpick b{font-size:1.1rem}
+.starterpick span{display:block;font-size:.88rem;font-weight:500}
+.prefix{display:inline-block;background:var(--c);color:var(--on);font-weight:800;border-radius:8px 8px 0 0;padding:4px 12px;margin-top:12px}
+details summary{cursor:pointer;font-weight:700;margin:10px 0}
+
+/* ---------- modal / toast ---------- */
+.overlay{position:fixed;inset:0;background:rgba(20,27,45,.6);display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;z-index:50}
+.modal{background:var(--paper);border-radius:16px;max-width:760px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-weight:700;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.35);animation:pop .25s}
+.toast.gain{background:var(--ok)} .toast.err{background:var(--bad)}
+@keyframes pop{from{transform:translate(-50%,16px);opacity:0}}
+
+/* ---------- printable cards ---------- */
+.cards-sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.idcard{border:2px dashed #555;border-radius:10px;padding:14px 16px;background:#fff;break-inside:avoid;font-size:.95rem}
+.idcard .h{font-family:"Iowan Old Style",Georgia,serif;font-weight:700;font-size:1.15rem;border-bottom:3px solid var(--gold);padding-bottom:5px;margin-bottom:8px}
+.idcard .nm{font-size:1.3rem;font-weight:800}
+.idcard .row{display:flex;justify-content:space-between;gap:8px;margin-top:6px;align-items:baseline}
+.idcard .row span:first-child{color:#555;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.idcard .val{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:1.1rem}
+.idcard .url{font-size:.82rem;word-break:break-all;margin-top:8px;color:#333}
+@media print{
+  body{background:#fff}
+  .topbar,.noprint,.toast,.warnbar{display:none!important}
+  main{padding:0;max-width:none}
+  .panel{border:0;box-shadow:none;padding:0}
+  @page{margin:10mm}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><p style="padding:2rem">Debate Academy needs JavaScript to run.</p></noscript>
+<script src="/content.js"></script>
+<script>
+(() => {
+'use strict';
+const C = window.CONTENT;
+const $app = document.getElementById('app');
+const S = { token: null, role: null, me: null, stats: { awards: {}, submissions: {} }, adminDefaults: null };
+try { S.token = localStorage.getItem('da_token'); S.role = localStorage.getItem('da_role'); } catch (e) {}
+
+/* ============================ utilities ============================ */
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k === 'html') el.innerHTML = v;
+    else if (k === 'value') el.value = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const words = (t) => (String(t).trim().match(/\S+/g) || []).length;
+const fmtDate = (ms) => ms ? new Date(ms).toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const brickStyle = (k) => `--c:${C.BRICKS[k].color};--on:${C.BRICKS[k].on}`;
+const sideClass = (s) => s === 'Proposition' ? 'prop' : 'opp';
+const otherSide = (s) => s === 'Proposition' ? 'Opposition' : 'Proposition';
+
+let toastTimer;
+function toast(msg, type) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = h('div', { class: 'toast ' + (type || ''), role: 'status' }, msg);
+  document.body.append(t);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.remove(), 2800);
+}
+function modal(title, body) {
+  const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  const ov = h('div', { class: 'overlay', onclick: (e) => { if (e.target === ov) close(); } },
+    h('div', { class: 'modal', role: 'dialog', 'aria-modal': 'true' },
+      h('div', { class: 'modal-head' }, h('h2', {}, title), h('button', { class: 'btn small ghost', onclick: close }, 'Close')),
+      body));
+  document.addEventListener('keydown', onKey);
+  document.body.append(ov);
+  return close;
+}
+function mount(...nodes) { $app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+
+/* ============================== api ================================ */
+async function api(path, { method = 'GET', body } = {}) {
+  const headers = {};
+  if (body !== undefined) headers['content-type'] = 'application/json';
+  if (S.token) headers.authorization = 'Bearer ' + S.token;
+  let res;
+  try {
+    res = await fetch('/api' + path, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined });
+  } catch (e) { throw new Error('Cannot reach the server. Check your internet connection.'); }
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (res.status === 401 && S.token && !path.startsWith('/login')) { signOut(); throw new Error('Please sign in again.'); }
+  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+  return data;
+}
+function setSession(token, role) {
+  S.token = token; S.role = role;
+  try { localStorage.setItem('da_token', token); localStorage.setItem('da_role', role); } catch (e) {}
+}
+function signOut() {
+  S.token = null; S.role = null; S.me = null; S.adminDefaults = null;
+  try { localStorage.removeItem('da_token'); localStorage.removeItem('da_role'); } catch (e) {}
+  location.hash = '#/login';
+  render();
+}
+async function logout() {
+  try { await api('/logout', { method: 'POST', body: {} }); } catch (e) {}
+  signOut();
+}
+
+/* ============================== shells ============================= */
+function rankInfo(xp) {
+  let i = 0;
+  C.RANKS.forEach((r, k) => { if (xp >= r.xp) i = k; });
+  const cur = C.RANKS[i], next = C.RANKS[i + 1];
+  return { cur, next, pct: next ? Math.round(((xp - cur.xp) / (next.xp - cur.xp)) * 100) : 100 };
+}
+function chipEl() {
+  const xp = S.me ? S.me.xp : 0, ri = rankInfo(xp);
+  return h('div', { class: 'xpchip', id: 'xpchip', title: ri.next ? `${ri.next.xp - xp} XP to ${ri.next.name}` : 'Top rank!' },
+    h('span', { class: 'rank' }, ri.cur.name), h('div', { class: 'bar' }, h('i', { style: `width:${ri.pct}%` })), h('span', {}, `${xp} XP`));
+}
+function refreshChip() { const old = document.getElementById('xpchip'); if (old) old.replaceWith(chipEl()); }
+
+function navLink(path, label, active) { return h('a', { href: '#' + path, class: path === active ? 'on' : '' }, label); }
+
+function pupilShell(content, active) {
+  return h('div', {},
+    h('div', { class: 'topbar' },
+      h('a', { class: 'logo', href: '#/home' }, '⚖ Debate ', h('span', {}, 'Academy')),
+      h('nav', { class: 'nav', 'aria-label': 'Main' },
+        navLink('/home', 'Home', active), navLink('/learn', 'Briefing', active), navLink('/toolkit', 'Toolkit', active), navLink('/sort', 'Label', active),
+        navLink('/order', 'Wall', active), navLink('/build', 'Workshop', active), navLink('/name', 'Name It', active), navLink('/lab', 'Lab', active),
+        navLink('/arena', 'Arena', active), navLink('/work', 'My work', active)),
+      chipEl(),
+      h('button', { class: 'btn small ghost', style: 'color:#fff;border-color:#fff', onclick: logout }, 'Log out')),
+    h('main', {}, content));
+}
+function adminShell(content, active) {
+  const banner = defaultsBanner();
+  return h('div', {},
+    h('div', { class: 'topbar' },
+      h('a', { class: 'logo', href: '#/a/classes' }, '⚖ Debate ', h('span', {}, 'Academy'), ' · Teacher'),
+      h('nav', { class: 'nav', 'aria-label': 'Teacher' },
+        navLink('/a/classes', 'Classes', active), navLink('/a/pupils', 'Pupils', active), navLink('/a/cards', 'Cards', active),
+        navLink('/a/subs', 'Submissions', active), navLink('/a/motions', 'Motions', active)),
+      h('button', { class: 'btn small ghost', style: 'color:#fff;border-color:#fff', onclick: logout }, 'Log out')),
+    h('main', {}, banner, content));
+}
+function defaultsBanner() {
+  const d = S.adminDefaults;
+  if (!d || (!d.user && !d.password)) return null;
+  const which = d.user && d.password ? 'username and password' : d.user ? 'username' : 'password';
+  return h('div', { class: 'warnbar noprint', role: 'alert' },
+    h('b', {}, `⚠ The default teacher ${which} ${d.user && d.password ? 'are' : 'is'} still active.`),
+    h('p', { class: 'small' }, 'Anyone who knows the default login can read pupil work. Set Cloudflare secrets, then redeploy or wait a minute:'),
+    h('div', {}, d.user ? [h('code', {}, 'npx wrangler secret put admin_user'), h('br')] : null, d.password ? h('code', {}, 'npx wrangler secret put admin_password') : null));
+}
+
+/* ============================ XP helper ============================ */
+async function loadMe() {
+  const r = await api('/me');
+  S.me = r.pupil; S.stats = r.stats;
+  S.stats.awards = S.stats.awards || {}; S.stats.submissions = S.stats.submissions || {};
+}
+async function award(kind, key, xp) {
+  try {
+    const r = await api('/award', { method: 'POST', body: { kind, key, xp } });
+    if (r.awarded) toast(`+${r.awarded} XP`, 'gain');
+    else if (r.capped) toast('Daily XP limit for this activity reached. Great practice though!');
+    if (S.me) { S.me.xp = r.xp; refreshChip(); }
+    return r;
+  } catch (e) { toast(e.message, 'err'); return null; }
+}
+
+/* ============================== login ============================== */
+function loginView() {
+  let mode = 'pupil';
+  const msg = h('div', { class: 'err', role: 'alert' });
+  const box = h('div', { class: 'panel' });
+  function paint() {
+    msg.textContent = '';
+    const tabs = h('div', { class: 'tabs' },
+      h('button', { class: mode === 'pupil' ? 'on' : '', type: 'button', onclick: () => { mode = 'pupil'; paint(); } }, 'I’m a pupil'),
+      h('button', { class: mode === 'admin' ? 'on' : '', type: 'button', onclick: () => { mode = 'admin'; paint(); } }, 'I’m a teacher'));
+    let form;
+    if (mode === 'pupil') {
+      form = h('form', { onsubmit: async (e) => {
+        e.preventDefault(); msg.textContent = '';
+        try {
+          const r = await api('/login/pupil', { method: 'POST', body: { username: form.querySelector('[name=u]').value, classCode: form.querySelector('[name=c]').value } });
+          setSession(r.token, 'pupil'); location.hash = '#/home'; render();
+        } catch (err) { msg.textContent = err.message; }
+      } },
+        h('label', { for: 'u' }, 'Your username'), h('input', { type: 'text', id: 'u', name: 'u', autocomplete: 'username', autocapitalize: 'none', spellcheck: 'false', required: true }),
+        h('label', { for: 'c' }, 'Class code'), h('input', { type: 'text', id: 'c', name: 'c', autocapitalize: 'characters', spellcheck: 'false', maxlength: '12', required: true, style: 'text-transform:uppercase;letter-spacing:.12em' }),
+        msg, h('div', { class: 'row-actions' }, h('button', { class: 'btn gold', type: 'submit' }, 'Enter the Academy')),
+        h('p', { class: 'small muted' }, 'Your username and class code are on the card your teacher gave you.'));
+    } else {
+      form = h('form', { onsubmit: async (e) => {
+        e.preventDefault(); msg.textContent = '';
+        try {
+          const r = await api('/login/admin', { method: 'POST', body: { username: form.querySelector('[name=u]').value, password: form.querySelector('[name=p]').value } });
+          setSession(r.token, 'admin'); S.adminDefaults = r.defaults; location.hash = '#/a/classes'; render();
+        } catch (err) { msg.textContent = err.message; }
+      } },
+        h('label', { for: 'u' }, 'Teacher username'), h('input', { type: 'text', id: 'u', name: 'u', autocomplete: 'username', autocapitalize: 'none', required: true }),
+        h('label', { for: 'p' }, 'Password'), h('input', { type: 'password', id: 'p', name: 'p', autocomplete: 'current-password', required: true }),
+        msg, h('div', { class: 'row-actions' }, h('button', { class: 'btn', type: 'submit' }, 'Open teacher dashboard')));
+    }
+    box.replaceChildren(tabs, form);
+    form.querySelector('input').focus();
+  }
+  paint();
+  mount(h('main', {}, h('div', { class: 'login-wrap' },
+    h('div', { class: 'login-hero' }, h('div', { class: 'big-logo' }, '⚖ Debate ', h('span', {}, 'Academy')),
+      h('p', { class: 'muted' }, 'Build arguments brick by brick. Break the other side’s.')), box)));
+}
+
+/* ============================= pupil: home ========================= */
+async function homeView() {
+  await loadMe();
+  const a = S.stats.awards, sub = S.stats.submissions;
+  const learnDone = (a.learn || 0) > 0;
+  const missions = [
+    { path: '/learn', ic: '📖', t: 'Briefing Room', d: 'What debate is, motions, sides, the five bricks, and sample arguments.', st: learnDone ? 'Completed ✔' : 'Earn 30 XP', c: '#3a6ea5' },
+    { path: '/sort', ic: '🏷️', t: 'Label the Brick', d: 'Quick-fire: which brick does this sentence belong to?', st: `Rounds played: ${a.sort || 0}`, c: '#d9482b' },
+    { path: '/order', ic: '🧱', t: 'Build the Wall', d: 'Tap the bricks in the right order to build three arguments.', st: `Rounds played: ${a.order || 0}`, c: '#f2a900' },
+    { path: '/build', ic: '🛠️', t: 'Debate Workshop', d: 'Pick a motion, set the stage and build your own substantive.', st: `Submitted: ${sub.substantive || 0}`, c: '#238b7e' },
+    { path: '/arena', ic: '⚔️', t: 'Rebuttal Arena', d: 'Find the cracked brick in an argument, then answer it.', st: `Replies sent: ${sub.rebuttal || 0}`, c: '#7b5ea7' },
+    { path: '/toolkit', ic: '🧰', t: 'Rebuttal Toolkit', d: 'Learn three ways to hit back: Not true, Even if, and Your side worsens the issue.', st: (a.toolkit || 0) > 0 ? 'Completed ✔' : 'Earn 30 XP', c: '#c0392b' },
+    { path: '/name', ic: '🔎', t: 'Name That Rebuttal', d: 'Which starter fits this reply, and which type of rebuttal is it?', st: `Rounds played: ${a.name || 0}`, c: '#238b7e' },
+    { path: '/lab', ic: '🥊', t: 'Rebuttal Lab', d: 'Pick a starter and write your own rebuttal. Try all three on every argument.', st: `Starters tried: ${a.lab || 0}`, c: '#f2a900' },
+    { path: '/work', ic: '📬', t: 'My Work', d: 'Your submissions and your teacher’s feedback.', st: S.stats.reviewed ? `${S.stats.reviewed} reviewed by your teacher` : 'Nothing reviewed yet', c: '#1f2a44' },
+  ];
+  const badges = [
+    ['📖', 'Scholar', learnDone], ['🏷️', 'First Brick', (a.sort || 0) >= 1], ['🧱', 'Wall Builder', (a.order || 0) >= 1],
+    ['🔍', 'Sharp Eyes', (a.spot || 0) >= 1], ['🛠️', 'Case Builder', (sub.substantive || 0) >= 1],
+    ['⚔️', 'Quick Reply', (sub.rebuttal || 0) >= 1], ['🧰', 'Toolkit Master', (a.toolkit || 0) >= 1], ['🔎', 'Rebuttal Spotter', (a.name || 0) >= 1], ['🥊', 'Hit Back', (a.lab || 0) >= 1], ['🏅', 'Teacher Approved', (S.stats.reviewed || 0) >= 1],
+  ];
+  const ri = rankInfo(S.me.xp);
+  mount(pupilShell(h('div', {},
+    h('h1', {}, `Welcome, ${S.me.displayName}!`),
+    h('p', { class: 'muted' }, `${S.me.className} · Rank: `, h('b', {}, ri.cur.name), ri.next ? ` · ${ri.next.xp - S.me.xp} XP to ${ri.next.name}` : ' · You are at the top!'),
+    S.stats.reviewed ? h('div', { class: 'notice' }, '📬 Your teacher has reviewed some of your work. ', h('a', { href: '#/work' }, 'Read the feedback')) : null,
+    h('div', { class: 'grid c2' }, missions.map((m) => h('a', { class: 'mission', href: '#' + m.path, style: `--c:${m.c}` },
+      h('div', { class: 'ic' }, m.ic), h('div', {}, h('h3', {}, m.t), h('p', {}, m.d), h('div', { class: 'st' }, m.st))))),
+    h('h2', { style: 'margin-top:28px' }, 'Badges'),
+    h('div', { class: 'badges' }, badges.map(([ic, n, on]) => h('div', { class: 'badge' + (on ? '' : ' locked'), title: on ? 'Earned' : 'Not earned yet' }, ic, ' ', n)))), '/home'));
+}
+
+/* ============================ shared pieces ======================== */
+function sampleEl(s, open) {
+  const wrap = h('div', { class: 'sample' }, h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(s.side) }, s.side), h('span', { class: 'motion' }, s.motion)));
+  C.BRICK_ORDER.forEach((k) => {
+    const b = C.BRICKS[k];
+    const row = h('button', { type: 'button', class: 'brick-row' + (open ? ' open' : ''), style: brickStyle(k), 'aria-expanded': open ? 'true' : 'false' },
+      h('span', { class: 'bl' }, `${b.icon} ${b.label.toUpperCase()}`), h('span', { class: 'bt' }, s.bricks[k]));
+    row.addEventListener('click', () => { row.classList.toggle('open'); row.setAttribute('aria-expanded', row.classList.contains('open')); });
+    wrap.append(row);
+  });
+  wrap.append(h('div', { class: 'row-actions' }, h('button', { type: 'button', class: 'btn small ghost', onclick: () => wrap.querySelectorAll('.brick-row').forEach((r) => r.classList.add('open')) }, 'Reveal all')));
+  return wrap;
+}
+function bricksExplainer() {
+  const wrap = h('div', {}, h('p', {}, 'Arguments are like the bricks that build your team’s case. To make them convincing, make sure they are ', h('b', {}, 'clear'), ' and ', h('b', {}, 'logical'), '. Tap each brick to see its job.'));
+  C.BRICK_ORDER.forEach((k, i) => {
+    const b = C.BRICKS[k];
+    const row = h('button', { type: 'button', class: 'brick-row' + (i === 0 ? ' open' : ''), style: brickStyle(k) },
+      h('span', { class: 'bl' }, `${i + 1}. ${b.icon} ${b.label.toUpperCase()}`),
+      h('span', { class: 'bt' }, b.def, h('br'), h('i', { class: 'small muted' }, 'Ask yourself: ' + b.ask)));
+    row.addEventListener('click', () => row.classList.toggle('open'));
+    wrap.append(row);
+  });
+  wrap.append(h('div', { class: 'callout' }, 'Structuring arguments along these five steps helps other people understand and be persuaded by them.'));
+  return wrap;
+}
+function stageExplainer() {
+  const ex = C.STAGE_EXAMPLE;
+  return h('div', {},
+    h('p', {}, 'Before you build any argument, the words in the motion must be ', h('b', {}, 'defined'), ' and the ', h('b', {}, 'context'), ' set, so everyone is debating the same thing.'),
+    h('div', { class: 'motion-card policy' }, h('span', { class: 'mk' }, 'Worked example'), ex.motion),
+    h('h3', {}, '1. Define the key words'),
+    h('table', { class: 'defs' }, h('tbody', {}, ex.define.map(([t, d]) => h('tr', {}, h('td', {}, t), h('td', {}, d))))),
+    h('h3', {}, '2. Set the context'),
+    h('p', {}, ex.context),
+    h('div', { class: 'callout' }, h('b', {}, 'A good definition is: '),
+      h('ul', {}, h('li', {}, 'clear: a reader knows exactly what it means;'), h('li', {}, 'fair: both sides can still argue it;'), h('li', {}, 'sensible: it matches what most people would understand by the words.'))));
+}
+function slideBody(s) {
+  if (s.html) return h('div', { class: 'slide', html: s.html.replace('__CRACKS__', C.BRICK_ORDER.map((k) => `<li><b>${C.BRICKS[k].label}:</b> ${C.CRACKS[k]}</li>`).join('')) });
+  if (s.sample) return h('div', {}, s.note ? h('p', { html: s.note }) : null, sampleEl(C.SAMPLES.find((x) => x.id === s.sample)));
+  if (s.bricks) return bricksExplainer();
+  if (s.stage) return stageExplainer();
+  return h('div');
+}
+
+/* ============================ pupil: learn ========================= */
+async function learnView() {
+  await loadMe();
+  let i = 0;
+  const total = C.SLIDES.length;
+  let done = (S.stats.awards.learn || 0) > 0;
+  const body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/learn'));
+  function paint() {
+    const s = C.SLIDES[i];
+    body.replaceChildren(
+      h('div', { class: 'dots' }, C.SLIDES.map((_, k) => h('span', { class: 'dot' + (k === i ? ' on' : k < i ? ' past' : '') }))),
+      h('h2', {}, s.title), slideBody(s),
+      h('div', { class: 'row-actions between' },
+        h('button', { class: 'btn ghost', disabled: i === 0, onclick: () => { i--; paint(); window.scrollTo(0, 0); } }, '← Back'),
+        i < total - 1 ? h('button', { class: 'btn', onclick: () => { i++; paint(); window.scrollTo(0, 0); } }, 'Next →')
+          : h('button', { class: 'btn gold', disabled: done, onclick: finish }, done ? 'Completed ✔' : 'Claim 30 XP')));
+  }
+  async function finish() {
+    const r = await award('learn', 'learn', 30);
+    if (r) { done = true; S.stats.awards.learn = 1; paint(); }
+  }
+  paint();
+}
+
+/* ======================== pupil: label the brick =================== */
+function buildSortItems(n) {
+  const pool = [];
+  C.SAMPLES.forEach((s) => C.BRICK_ORDER.forEach((k) => pool.push({ text: s.bricks[k], brick: k, motion: s.motion, side: s.side, point: s.bricks.point, arg: s.id })));
+  const out = [], per = {};
+  for (const it of shuffle(pool)) {
+    if ((per[it.arg] || 0) >= 2) continue;
+    per[it.arg] = (per[it.arg] || 0) + 1; out.push(it);
+    if (out.length === n) break;
+  }
+  return out;
+}
+async function sortView() {
+  await loadMe();
+  const N = 8, items = buildSortItems(N);
+  let i = 0, score = 0, streak = 0, best = 0, answered = false;
+  const body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/sort'));
+  function paint() {
+    if (i >= N) return finish();
+    const it = items[i]; answered = false;
+    const choices = h('div', { class: 'choices' }, C.BRICK_ORDER.map((k) => {
+      const b = C.BRICKS[k];
+      return h('button', { class: 'choice', style: brickStyle(k), onclick: (e) => pick(k, e.currentTarget) }, `${b.icon} ${b.label}`);
+    }));
+    const fb = h('div');
+    body.replaceChildren(
+      h('div', { class: 'q-meta' }, h('span', {}, `Question ${i + 1} of ${N}`), h('span', {}, `Score ${score} · Streak 🔥 ${streak}`)),
+      h('h2', {}, 'Which brick is this?'),
+      h('div', { class: 'ctx' }, h('span', { class: 'tag ' + sideClass(it.side) }, it.side), ' ', h('b', {}, it.motion)),
+      it.brick !== 'point' ? h('div', { class: 'ctx' }, 'The argument’s Point: ', h('i', {}, it.point)) : null,
+      h('div', { class: 'quote' }, it.text), choices, fb);
+    body._fb = fb; body._choices = choices;
+  }
+  function pick(k, btn) {
+    if (answered) return; answered = true;
+    const it = items[i], ok = k === it.brick, b = C.BRICKS[it.brick];
+    body._choices.querySelectorAll('.choice').forEach((c) => { c.disabled = true; });
+    [...body._choices.children].forEach((c, idx) => {
+      const key = C.BRICK_ORDER[idx];
+      if (key === it.brick) c.classList.add('right'); else if (c === btn) c.classList.add('wrong'); else c.classList.add('dim');
+    });
+    if (ok) { score++; streak++; best = Math.max(best, streak); } else streak = 0;
+    body._fb.replaceChildren(h('div', { class: 'feedback ' + (ok ? 'good' : 'bad') },
+      ok ? '✔ Correct!' : `✘ This one is the ${b.label} brick.`,
+      h('p', {}, h('b', {}, b.label + ': '), b.def), h('p', { class: 'small' }, 'Ask yourself: ' + b.ask)),
+      h('div', { class: 'row-actions' }, h('button', { class: 'btn', onclick: () => { i++; paint(); } }, i + 1 >= N ? 'See results' : 'Next →')));
+    body._fb.querySelector('.btn').focus();
+  }
+  async function finish() {
+    const xp = Math.round((score / N) * 60);
+    body.replaceChildren(h('div', { class: 'result' }, h('h2', {}, score === N ? 'Perfect round! 🏆' : score >= 6 ? 'Strong work! 💪' : 'Keep building! 🧱'),
+      h('div', { class: 'score' }, `${score} / ${N}`), h('p', { class: 'muted' }, `Best streak: ${best}`),
+      h('div', { class: 'row-actions', style: 'justify-content:center' }, h('button', { class: 'btn gold', onclick: sortView }, 'Play again'), h('a', { class: 'btn ghost', href: '#/home', style: 'text-decoration:none' }, 'Back to missions'))));
+    await award('sort', 'sort:' + uid(), xp);
+  }
+  paint();
+}
+
+/* ========================= pupil: build the wall =================== */
+async function orderView() {
+  await loadMe();
+  const rounds = shuffle(C.SAMPLES).slice(0, 3).map((s) => ({ s, bag: shuffle(C.BRICK_ORDER), placed: [], mistakes: 0, step: 0 }));
+  let r = 0, hintShown = false;
+  const body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/order'));
+  function paint() {
+    if (r >= rounds.length) return finish();
+    const R = rounds[r], next = C.BRICK_ORDER[R.placed.length];
+    const placed = h('div', { class: 'placed' }, R.placed.map((k) => h('div', { class: 'brick-row open', style: brickStyle(k) },
+      h('span', { class: 'bl' }, `${R.placed.indexOf(k) + 1}. ${C.BRICKS[k].icon} ${C.BRICKS[k].label.toUpperCase()}`), h('span', { class: 'bt' }, R.s.bricks[k]))));
+    const pool = h('div', { class: 'pool' }, R.bag.filter((k) => !R.placed.includes(k)).map((k) =>
+      h('button', { type: 'button', onclick: (e) => tap(k, e.currentTarget) }, R.s.bricks[k])));
+    body.replaceChildren(
+      h('div', { class: 'q-meta' }, h('span', {}, `Argument ${r + 1} of ${rounds.length}`), h('span', {}, `Mistakes: ${R.mistakes}`)),
+      h('h2', {}, 'Build the wall'),
+      h('div', { class: 'ctx' }, h('span', { class: 'tag ' + sideClass(R.s.side) }, R.s.side), ' ', h('b', {}, R.s.motion)),
+      h('p', {}, 'These five bricks are jumbled. Tap the one that should come ', h('b', {}, 'next'), '.'),
+      placed, pool, h('div', { class: 'ctx', id: 'hint' }, hintShown ? ['Hint: next is the brick that answers “', C.BRICKS[next].ask, '”'] : ''));
+    body._pool = pool;
+  }
+  function tap(k, btn) {
+    const R = rounds[r], next = C.BRICK_ORDER[R.placed.length];
+    if (k === next) { R.placed.push(k); hintShown = false; paint(); if (R.placed.length === 5) setTimeout(() => { toast('Argument complete! 🧱'); r++; paint(); }, 700); return; }
+    R.mistakes++; R.step++;
+    btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+    if (R.step >= 2) { hintShown = true; const hn = document.getElementById('hint'); if (hn) hn.replaceChildren('Hint: next is the brick that answers “', C.BRICKS[next].ask, '”'); }
+    const mc = body.querySelector('.q-meta span:last-child'); if (mc) mc.textContent = `Mistakes: ${R.mistakes}`;
+  }
+  async function finish() {
+    const xp = rounds.reduce((t, R) => t + Math.max(0, 15 - 3 * R.mistakes), 0);
+    const total = rounds.reduce((t, R) => t + R.mistakes, 0);
+    body.replaceChildren(h('div', { class: 'result' }, h('h2', {}, total === 0 ? 'Flawless wall! 🏆' : 'Wall complete! 🧱'),
+      h('div', { class: 'score' }, `${total} mistake${total === 1 ? '' : 's'}`), h('p', { class: 'muted' }, 'Order to remember: Point → Significance → Cause → Effect → Example'),
+      h('div', { class: 'row-actions', style: 'justify-content:center' }, h('button', { class: 'btn gold', onclick: orderView }, 'Play again'), h('a', { class: 'btn ghost', href: '#/home', style: 'text-decoration:none' }, 'Back to missions'))));
+    await award('order', 'order:' + uid(), xp);
+  }
+  paint();
+}
+
+/* ========================== pupil: workshop ======================== */
+function hasProperNoun(text) {
+  return text.split(/[.!?]\s+/).some((s) => s.trim().split(/\s+/).slice(1).some((w) => /^[A-Z][a-z]{2,}/.test(w)));
+}
+function checkBrick(key, text) {
+  const b = C.BRICKS[key], n = words(text), t = text.toLowerCase(), tips = [];
+  if (n < b.min) tips.push(`Aim for at least ${b.min} words (you have ${n}).`);
+  if (key === 'point' && n > 0) {
+    if (n > 35) tips.push('Keep your Point short and direct.');
+    if ((text.match(/[.!?](\s|$)/g) || []).length > 1) tips.push('Your Point should be a single sentence.');
+  }
+  if (n >= b.min) {
+    if (key === 'cause' && !/(because|since|therefore|hence|\bso\b|\bwhen\b|\bif\b|leads|causes|means|due to)/.test(t)) tips.push('Explain WHY your claim is true. Try “because…” or “since…”.');
+    if (key === 'example' && !(/\d/.test(text) || /(for example|for instance|such as|study|survey|research|report)/.test(t) || hasProperNoun(text))) tips.push('Use a real event, place or statistic. Name where or when it happened.');
+  }
+  return { ok: tips.length === 0, tips, n };
+}
+function checkStage(W) {
+  const out = { define: [], context: [] };
+  if (words(W.define) < 12) out.define.push(`Define the key words in a full sentence or two (at least 12 words; you have ${words(W.define)}).`);
+  (W.terms || []).forEach((term) => { if (W.define.toLowerCase().indexOf(term.toLowerCase()) < 0) out.define.push(`Have you defined “${term}”?`); });
+  if (words(W.context) < 12) out.context.push(`Explain the situation that makes this worth debating (at least 12 words; you have ${words(W.context)}).`);
+  return out;
+}
+const emptyW = () => ({ phase: 'pick', motion: '', side: '', terms: [], define: '', context: '', bricks: { point: '', significance: '', cause: '', effect: '', example: '' } });
+
+async function buildView() {
+  await loadMe();
+  let custom = [], draft = null;
+  try { custom = (await api('/motions')).motions; } catch (e) {}
+  try { draft = (await api('/draft/workshop')).draft; } catch (e) {}
+  let W = emptyW();
+  const body = h('div');
+  mount(pupilShell(body, '/build'));
+  let saveTimer;
+  const scheduleSave = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => api('/draft/workshop', { method: 'PUT', body: { payload: W } }).catch(() => {}), 900); };
+
+  function pickPhase() {
+    const bank = C.MOTIONS.map((m) => ({ text: m.text, kind: m.kind, terms: m.terms }))
+      .concat(custom.map((m) => ({ text: m.text, kind: m.kind, terms: [], hint: m.hint, teacher: true })));
+    const typed = h('input', { type: 'text', placeholder: 'Or type your own motion, e.g. This House would…', maxlength: '300', 'aria-label': 'Your own motion' });
+    let chosen = null, side = '';
+    const startBtn = h('button', { class: 'btn gold', disabled: true, onclick: start }, 'Start building →');
+    const check = () => { startBtn.disabled = !((chosen || typed.value.trim().length > 12) && side); };
+    const picks = h('div', {});
+    const paintPicks = () => picks.replaceChildren(...bank.map((m) => h('button', { type: 'button', class: 'motion-pick' + (chosen === m ? ' on' : ''),
+      onclick: () => { chosen = m; typed.value = ''; paintPicks(); check(); } },
+      h('span', { class: 'tag', style: 'margin-right:8px' }, m.teacher ? 'Teacher' : m.kind === 'policy' ? 'Rule' : 'Opinion'), m.text, m.hint ? h('div', { class: 'small muted' }, m.hint) : null)));
+    typed.addEventListener('input', () => { if (typed.value) { chosen = null; paintPicks(); } check(); });
+    const sideBox = h('div', { class: 'sidepick' });
+    const paintSide = () => sideBox.replaceChildren(
+      h('button', { type: 'button', class: 'prop' + (side === 'Proposition' ? ' on' : ''), onclick: () => { side = 'Proposition'; paintSide(); check(); } }, 'Proposition (agree)'),
+      h('button', { type: 'button', class: 'opp' + (side === 'Opposition' ? ' on' : ''), onclick: () => { side = 'Opposition'; paintSide(); check(); } }, 'Opposition (disagree)'));
+    function start() {
+      W = emptyW();
+      W.motion = chosen ? chosen.text : typed.value.trim(); W.terms = chosen ? chosen.terms : []; W.side = side; W.phase = 'stage';
+      scheduleSave(); stagePhase();
+    }
+    paintPicks(); paintSide();
+    const hasDraft = draft && draft.motion;
+    body.replaceChildren(h('div', { class: 'panel' },
+      h('h2', {}, '🛠️ Debate Workshop'), h('p', {}, 'Choose a motion and a side. You will define the motion, set the context, then build all five bricks.'),
+      hasDraft ? h('div', { class: 'notice' }, h('b', {}, 'You have a draft: '), draft.motion, h('div', { class: 'row-actions' },
+        h('button', { class: 'btn small', onclick: () => { W = Object.assign(emptyW(), draft); W.bricks = Object.assign(emptyW().bricks, draft.bricks || {}); W.phase === 'pick' ? stagePhase() : (W.phase === 'wall' ? wallPhase() : stagePhase()); } }, 'Continue my draft'),
+        h('button', { class: 'btn small ghost', onclick: () => { draft = null; api('/draft/workshop', { method: 'DELETE' }).catch(() => {}); pickPhase(); } }, 'Throw it away'))) : null,
+      h('h3', {}, '1. Motion'), picks, typed, h('h3', { style: 'margin-top:18px' }, '2. Your side'), sideBox,
+      h('div', { class: 'row-actions' }, startBtn)));
+  }
+
+  function header() {
+    return h('div', {}, h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(W.side) }, W.side), h('span', { class: 'motion' }, W.motion)),
+      h('div', { class: 'row-actions', style: 'margin-top:0' },
+        h('button', { class: 'btn small ghost', onclick: () => modal('Worked example: defining a motion', stageExplainer()) }, 'Peek: how to define a motion'),
+        h('button', { class: 'btn small ghost', onclick: () => modal('Worked example: a finished argument', sampleEl(C.SAMPLES[0], true)) }, 'Peek: a finished argument')));
+  }
+
+  function stagePhase() {
+    W.phase = 'stage';
+    const dBox = h('div', { class: 'checks' }), cBox = h('div', { class: 'checks' });
+    const next = h('button', { class: 'btn gold', onclick: () => { wallPhase(); } }, 'Next: build the wall →');
+    const dIn = h('textarea', { 'aria-label': 'Definitions', placeholder: 'e.g. “Ban” means…  “…” means…', value: W.define });
+    const cIn = h('textarea', { 'aria-label': 'Context', placeholder: 'What is happening in the world that makes this motion worth debating?', value: W.context });
+    function refresh() {
+      const c = checkStage(W);
+      dBox.replaceChildren(...(c.define.length ? c.define.map((t) => h('div', { class: 't' }, '• ' + t)) : [h('div', { class: 'g' }, '✔ Clear definitions')]));
+      cBox.replaceChildren(...(c.context.length ? c.context.map((t) => h('div', { class: 't' }, '• ' + t)) : [h('div', { class: 'g' }, '✔ Context set')]));
+      next.disabled = words(W.define) < 8 || words(W.context) < 8;
+    }
+    dIn.addEventListener('input', () => { W.define = dIn.value; refresh(); scheduleSave(); });
+    cIn.addEventListener('input', () => { W.context = cIn.value; refresh(); scheduleSave(); });
+    body.replaceChildren(h('div', { class: 'panel' }, header(), h('h2', { style: 'margin-top:16px' }, 'Step 1 · Set the stage'),
+      h('label', {}, 'Define the key words in the motion'),
+      W.terms && W.terms.length ? h('div', { class: 'chips' }, W.terms.map((t) => h('span', { class: 'chip term' }, t))) : null, dIn, dBox,
+      h('label', {}, 'Set the context'), cIn, cBox,
+      h('div', { class: 'row-actions between' }, h('button', { class: 'btn ghost', onclick: () => { W.phase = 'pick'; pickPhase(); } }, '← Change motion'), next)));
+    refresh();
+  }
+
+  function wallPhase() {
+    W.phase = 'wall'; scheduleSave();
+    const viz = h('div', { class: 'wallviz', 'aria-label': 'Wall strength' });
+    const strength = h('div', { class: 'small muted' });
+    const preview = h('div', { class: 'preview' });
+    const submit = h('button', { class: 'btn gold', onclick: send }, 'Submit to my teacher');
+    const boxes = {};
+    const editors = C.BRICK_ORDER.map((k, i) => {
+      const b = C.BRICKS[k], tips = h('div', { class: 'checks' }), count = h('span', {});
+      const ta = h('textarea', { 'aria-label': b.label, value: W.bricks[k], placeholder: b.starters[0] });
+      boxes[k] = { tips, ta };
+      ta.addEventListener('input', () => { W.bricks[k] = ta.value; update(); scheduleSave(); });
+      return h('section', { class: 'editor', style: brickStyle(k) },
+        h('header', {}, h('b', {}, `${i + 1}. ${b.icon} ${b.label.toUpperCase()}`), h('span', {}, b.ask)),
+        h('div', { class: 'in' }, h('p', { class: 'def' }, b.def), h('div', { class: 'chips' }, b.starters.map((s) => h('span', { class: 'chip' }, s))), ta, tips));
+    });
+    function update() {
+      let pass = 0;
+      viz.replaceChildren(...C.BRICK_ORDER.map((k) => {
+        const c = checkBrick(k, W.bricks[k]); const ok = c.ok && c.n > 0; if (ok) pass++;
+        boxes[k].tips.replaceChildren(...(W.bricks[k].trim() ? (c.ok ? [h('div', { class: 'g' }, '✔ Solid brick')] : c.tips.map((t) => h('div', { class: 't' }, '• ' + t))) : []));
+        return h('div', { class: 'wrow' + (ok ? ' on' : ''), style: brickStyle(k) }, h('i'), h('i'), h('i'), h('i'));
+      }));
+      strength.textContent = `Wall strength: ${pass} / 5 bricks solid`;
+      const filled = C.BRICK_ORDER.every((k) => words(W.bricks[k]) >= 3);
+      submit.disabled = !filled;
+      preview.replaceChildren(...(filled ? C.BRICK_ORDER.flatMap((k) => [h('mark', { style: `--c:${C.BRICKS[k].color}` }, W.bricks[k]), ' ']) : [h('span', { class: 'muted' }, 'Fill every brick to hear your argument read out in full.')]));
+      W._pass = pass;
+    }
+    async function send() {
+      submit.disabled = true;
+      try {
+        const r = await api('/submissions', { method: 'POST', body: { kind: 'substantive', motion: W.motion, side: W.side, payload: { define: W.define, context: W.context, bricks: W.bricks, solid: W._pass || 0 } } });
+        api('/draft/workshop', { method: 'DELETE' }).catch(() => {}); draft = null;
+        if (S.me) { S.me.xp = r.xp; refreshChip(); }
+        if (r.awarded) toast(`+${r.awarded} XP`, 'gain');
+        body.replaceChildren(h('div', { class: 'panel result' }, h('h2', {}, 'Submitted! 🎉'), h('p', {}, 'Your teacher will read your argument and leave feedback in ', h('b', {}, 'My Work'), '.'),
+          h('div', { class: 'row-actions', style: 'justify-content:center' }, h('button', { class: 'btn gold', onclick: () => { W = emptyW(); pickPhase(); } }, 'Build another'), h('a', { class: 'btn ghost', href: '#/work', style: 'text-decoration:none' }, 'See my work'))));
+      } catch (e) { toast(e.message, 'err'); submit.disabled = false; }
+    }
+    body.replaceChildren(h('div', { class: 'panel' }, header(), h('h2', { style: 'margin-top:16px' }, 'Step 2 · Build the wall'), viz, strength, ...editors,
+      h('h3', {}, 'Read it aloud'), preview,
+      h('div', { class: 'sticky-save' }, h('div', { class: 'row-actions between' }, h('button', { class: 'btn ghost', onclick: stagePhase }, '← Back'), submit))));
+    update();
+  }
+
+  if (W.phase === 'pick') pickPhase();
+}
+
+/* ========================== pupil: rebuttal arena ================== */
+async function arenaView(id) {
+  await loadMe();
+  let mine = [];
+  try { mine = (await api('/submissions/mine')).submissions; } catch (e) {}
+  const done = new Set(mine.filter((s) => s.kind === 'rebuttal' && s.payload && s.payload.scenarioId).map((s) => s.payload.scenarioId));
+  const sc = id ? C.SCENARIOS.find((x) => x.id === id) : null;
+  if (!sc) {
+    mount(pupilShell(h('div', {},
+      h('div', { class: 'panel' }, h('h2', {}, '⚔️ Rebuttal Arena'), h('p', {}, 'Each case file holds an argument with one cracked brick. Find the crack, then write a reply using ', h('b', {}, 'SAY → BUT → BECAUSE → SO'), '.')),
+      h('div', { class: 'grid c2', style: 'margin-top:14px' }, C.SCENARIOS.map((s, n) => h('a', { class: 'case', href: '#/arena/' + s.id, style: `--c:${s.side === 'Proposition' ? '#3a6ea5' : '#d9482b'}` },
+        h('div', {}, h('span', { class: 'tag ' + sideClass(s.side) }, s.side + ' speaks'), ' ', done.has(s.id) ? h('span', { class: 'tag ok' }, 'Replied ✔') : null),
+        h('h3', { style: 'margin:8px 0 2px' }, `Case ${n + 1}: ${s.title}`), h('div', { class: 'small muted' }, s.motion))))), '/arena'));
+    return;
+  }
+  let tries = 0, found = false, sent = false, guessed = new Set();
+  const mySide = otherSide(sc.side), body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/arena'));
+  const F = { say: '', but: '', because: '', so: '' };
+  const spec = [
+    ['say', 'SAY', 'Fairly summarise what they claimed.', 5, ['The ' + sc.side + ' claims that…', 'The other side says…']],
+    ['but', 'BUT', 'Name the crack. Begin with a starter: Not true, Even if, or Your side worsens the issue.', 8, C.RB_FAMILIES.map((f) => f.starter + (f.join.trim() ? ':' : '') + ' …')],
+    ['because', 'BECAUSE', 'Give your reason or evidence.', 12, ['This is because…', 'For example,…']],
+    ['so', 'SO', 'Link back to the motion. Why does this help your side?', 8, ['So the ' + sc.side + ' has not shown…', 'Therefore our side…']],
+  ];
+  function paint() {
+    const bricks = C.BRICK_ORDER.map((k) => {
+      const b = C.BRICKS[k], cracked = found && k === sc.crack;
+      return h('button', { type: 'button', class: 'crackpick' + (cracked ? ' cracked' : guessed.has(k) ? ' solid' : ''), style: brickStyle(k), disabled: found, onclick: () => guess(k) },
+        h('span', { class: 'bl' }, `${b.icon} ${b.label.toUpperCase()}`), h('span', { class: 'bt' }, sc.bricks[k]));
+    });
+    body.replaceChildren(
+      h('a', { href: '#/arena', class: 'small' }, '← All case files'),
+      h('h2', {}, `${sc.title}`),
+      h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(sc.side) }, sc.side + ' speaks'), h('span', { class: 'motion' }, sc.motion)),
+      found ? null : h('p', {}, h('b', {}, 'Step 1: '), 'One brick is cracked. Tap it.', tries ? h('span', { class: 'muted' }, ` (${tries} wrong so far)`) : null),
+      ...bricks,
+      found ? h('div', { class: 'feedback good' }, '🔍 The crack is in the ', h('b', {}, C.BRICKS[sc.crack].label), ' brick.', h('p', {}, sc.why)) : null,
+      found ? replyForm() : null);
+  }
+  async function guess(k) {
+    if (found) return;
+    if (k === sc.crack) {
+      found = true; paint();
+      const xp = tries === 0 ? 20 : tries === 1 ? 10 : 5;
+      await award('spot', 'spot:' + sc.id, xp);
+    } else {
+      tries++; guessed.add(k);
+      if (tries >= 3) { found = true; toast('Here is the crack. Now write your reply!'); } else toast('That brick holds up. Look again.');
+      paint();
+    }
+  }
+  function replyForm() {
+    if (sent) return modelBlock();
+    const send = h('button', { class: 'btn gold', disabled: true, onclick: submit }, 'Send reply to my teacher');
+    const fields = spec.map(([key, label, help, min, starters]) => {
+      const ta = h('textarea', { 'aria-label': label, placeholder: starters[0], value: F[key] });
+      const note = h('div', { class: 'checks' });
+      ta.addEventListener('input', () => { F[key] = ta.value; refresh(); });
+      return { key, label, help, min, starters, ta, note, el: h('div', { class: 'editor', style: '--c:#1f2a44;--on:#fff' },
+        h('header', {}, h('b', {}, label), h('span', {}, help)), h('div', { class: 'in' }, h('div', { class: 'chips' }, starters.map((s) => h('span', { class: 'chip' }, s))), ta, note)) };
+    });
+    function refresh() {
+      let ok = true;
+      fields.forEach((f) => {
+        const n = words(F[f.key]);
+        const noStarter = f.key === 'but' && !C.RB_FAMILIES.some((fm) => F.but.toLowerCase().includes(fm.starter.toLowerCase()));
+        const good = n >= f.min && !noStarter; if (!good) ok = false;
+        f.note.replaceChildren(good ? h('div', { class: 'g' }, '✔') : h('div', { class: 't' }, n < f.min ? `• At least ${f.min} words (you have ${n}).` : '• Begin with Not true, Even if, or Your side worsens the issue.'));
+      });
+      send.disabled = !ok;
+    }
+    async function submit() {
+      send.disabled = true;
+      try {
+        const r = await api('/submissions', { method: 'POST', body: { kind: 'rebuttal', motion: sc.motion, side: mySide, payload: { scenarioId: sc.id, scenarioTitle: sc.title, crack: sc.crack, tries, say: F.say, but: F.but, because: F.because, so: F.so } } });
+        if (S.me) { S.me.xp = r.xp; refreshChip(); }
+        if (r.awarded) toast(`+${r.awarded} XP`, 'gain');
+        sent = true; paint();
+      } catch (e) { toast(e.message, 'err'); send.disabled = false; }
+    }
+    queueMicrotask(refresh);
+    return h('div', {}, h('h3', { style: 'margin-top:20px' }, `Step 2: Reply as the ${mySide}`), ...fields.map((f) => f.el), h('div', { class: 'row-actions' }, send));
+  }
+  function modelBlock() {
+    const m = sc.model;
+    return h('div', {}, h('div', { class: 'feedback good' }, '✔ Reply sent! Your teacher will read it.'),
+      h('h3', { style: 'margin-top:18px' }, 'Compare with a model reply'),
+      h('div', { class: 'placed' }, [['SAY', m.say], ['BUT', m.but], ['BECAUSE', m.because], ['SO', m.so]].map(([l, t]) => h('div', { class: 'brick-row open', style: '--c:#1f2a44;--on:#fff' }, h('span', { class: 'bl' }, l), h('span', { class: 'bt' }, t)))),
+      sc.family ? h('p', {}, 'This crack is best answered with ', starterTag(FAM(sc.family)), '.') : null,
+      h('p', { class: 'small muted' }, 'Your reply does not need to match. Different good rebuttals are possible.'),
+      h('div', { class: 'row-actions' }, h('a', { class: 'btn gold', href: '#/arena', style: 'text-decoration:none' }, 'Next case file')));
+  }
+  paint();
+}
+
+/* ====================== rebuttals: toolkit, name it, lab ============ */
+function FAM(id) { return C.RB_FAMILIES.find((f) => f.id === id); }
+function rbFull(fam, body) { return fam.starter + fam.join + body; }
+function prefixOf(fam) { return fam.starter + fam.join.trimEnd(); }
+function starterTag(fam) { return h('span', { class: 'starter', style: `--c:${fam.color};--on:${fam.on}` }, `${fam.icon} ${fam.starter}`); }
+function sayLine(label, ...kids) { return h('div', { class: 'say' + (label === 'You say' ? ' you' : '') }, h('span', { class: 'l' }, label + ': '), ...kids); }
+
+function famSlideEl(fam) {
+  const groups = [...new Set(fam.subs.map((x) => x.group))];
+  return h('div', {},
+    h('div', { class: 'famhead', style: `--c:${fam.color};--on:${fam.on}` }, h('div', { class: 'fs' }, `${fam.icon} “${fam.starter}…”`), h('div', {}, fam.plain)),
+    h('p', { class: 'small' }, h('b', {}, 'Core message: '), fam.msg),
+    h('p', { class: 'small' }, h('b', {}, 'Best for: '), fam.strength),
+    groups.map((g) => h('div', {}, h('h3', { style: 'margin-top:16px' }, g),
+      fam.subs.filter((x) => x.group === g).map((x) => h('div', { class: 'rbcard', style: `--c:${fam.color}` },
+        h('b', {}, x.name), h('p', { class: 'small' }, x.def), sayLine('They say', x.claim),
+        sayLine('You say', h('mark', { style: `--c:${fam.color}` }, prefixOf(fam)), ' ', x.body))))));
+}
+function labPayloadEl(p) {
+  const lc = C.LAB_CASES.find((x) => x.id === p.labId), fam = FAM(p.starter);
+  return h('div', {},
+    lc ? h('div', { class: 'callout' }, h('b', {}, `Rebuttal Lab: ${lc.title}. `), `${lc.side} argument on “${lc.motion}”: ${lc.argument.point} ${lc.argument.cause} ${lc.argument.effect}`) : null,
+    h('div', { class: 'brick-row open', style: `--c:${fam ? fam.color : '#1f2a44'};--on:${fam ? fam.on : '#fff'}` },
+      h('span', { class: 'bl' }, fam ? `${fam.icon} ${fam.starter.toUpperCase()}` : 'REBUTTAL'), h('span', { class: 'bt' }, p.text || '')));
+}
+
+function toolkitSlides() {
+  const fams = C.RB_FAMILIES, lab = C.LAB_CASES[0];
+  return [
+    { title: 'Three ways to hit back', el: () => h('div', {},
+      h('p', { class: 'big' }, 'To rebut an argument, do not just say “No!”. Attack one specific part of it. Every rebuttal here begins with one of three sentence starters:'),
+      fams.map((f) => h('div', { class: 'famcard', style: `--c:${f.color}` }, starterTag(f), h('h3', { style: 'margin-top:8px' }, f.plain), h('div', { class: 'small muted' }, 'Covers: ' + f.types))),
+      h('div', { class: 'callout' }, 'The starter is your ', h('b', {}, 'BUT'), ' in SAY → BUT → BECAUSE → SO. Next, learn what each one does.')) },
+    ...fams.map((f) => ({ title: `“${f.starter}…”`, el: () => famSlideEl(f) })),
+    { title: 'Rebuttals at a glance', el: () => h('div', { class: 'scroll-x' }, h('table', { class: 't' },
+      h('thead', {}, h('tr', {}, ['Rebuttal type', 'Starter', 'Core message', 'Strength'].map((x) => h('th', {}, x)))),
+      h('tbody', {}, C.RB_GLANCE.map((r) => h('tr', {}, h('td', {}, h('b', {}, r.type)), h('td', {}, starterTag(FAM(r.family))), h('td', {}, r.msg), h('td', { class: 'small' }, r.strength)))))) },
+    { title: 'Three replies to one argument', el: () => h('div', {},
+      h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(lab.side) }, lab.side + ' speaks'), h('span', { class: 'motion' }, lab.motion)),
+      h('div', { class: 'callout' }, h('b', {}, lab.argument.point), ' ', lab.argument.cause, ' ', lab.argument.effect),
+      fams.map((f) => h('div', { class: 'rbcard', style: `--c:${f.color}` }, starterTag(f),
+        sayLine('You say', h('mark', { style: `--c:${f.color}` }, prefixOf(f)), ' ', lab.models[f.id]))),
+      h('p', { class: 'small muted' }, 'Same argument, three different attacks. Next: spot them in the Name That Rebuttal drill, then write your own in the Rebuttal Lab.')) },
+  ];
+}
+async function toolkitView() {
+  await loadMe();
+  const slides = toolkitSlides();
+  let i = 0, done = (S.stats.awards.toolkit || 0) > 0;
+  const body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/toolkit'));
+  function paint() {
+    const sl = slides[i];
+    body.replaceChildren(
+      h('div', { class: 'dots' }, slides.map((_, k) => h('span', { class: 'dot' + (k === i ? ' on' : k < i ? ' past' : '') }))),
+      h('h2', {}, sl.title), sl.el(),
+      h('div', { class: 'row-actions between' },
+        h('button', { class: 'btn ghost', disabled: i === 0, onclick: () => { i--; paint(); window.scrollTo(0, 0); } }, '← Back'),
+        i < slides.length - 1 ? h('button', { class: 'btn', onclick: () => { i++; paint(); window.scrollTo(0, 0); } }, 'Next →')
+          : h('button', { class: 'btn gold', disabled: done, onclick: finish }, done ? 'Completed ✔' : 'Claim 30 XP')));
+  }
+  async function finish() { const r = await award('toolkit', 'toolkit', 30); if (r) { done = true; S.stats.awards.toolkit = 1; paint(); } }
+  paint();
+}
+
+async function nameView() {
+  await loadMe();
+  const N = 8, items = shuffle(C.RB_ITEMS).slice(0, N);
+  let i = 0, score = 0;
+  const body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/name'));
+  function paint() {
+    if (i >= N) return finish();
+    const it = items[i], area = h('div');
+    body.replaceChildren(
+      h('div', { class: 'q-meta' }, h('span', {}, `Rebuttal ${i + 1} of ${N}`), h('span', {}, `Score ${score}`)),
+      h('h2', {}, 'Name that rebuttal'),
+      sayLine('They say', it.claim), sayLine('You reply', '▢▢▢ … ' + it.body), area);
+    area.append(h('p', {}, h('b', {}, 'Step 1: '), 'Which sentence starter fits this reply?'),
+      h('div', { class: 'choices', id: 'famchoices' }, C.RB_FAMILIES.map((f) =>
+        h('button', { class: 'choice', style: `--c:${f.color};--on:${f.on}`, onclick: (e) => pickFam(f, it, area, e.currentTarget) }, `${f.icon} ${f.starter}`))));
+  }
+  function pickFam(f, it, area, btn) {
+    const ok = f.id === it.family;
+    area.querySelectorAll('#famchoices .choice').forEach((c) => { c.disabled = true; });
+    btn.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) return reveal(it, area, `✘ This reply begins “${FAM(it.family).starter}”.`, false);
+    score++;
+    const fam = FAM(it.family), sec = h('div', { style: 'margin-top:14px' },
+      h('p', {}, h('b', {}, 'Step 2: '), 'Which type of ', h('b', {}, fam.starter), ' is it?'),
+      h('div', { class: 'choices', id: 'subchoices' }, shuffle(fam.subs).map((x) =>
+        h('button', { class: 'choice', style: `--c:${fam.color};--on:${fam.on}`, onclick: (e) => pickSub(x, it, area, e.currentTarget) }, x.name))));
+    area.append(sec);
+  }
+  function pickSub(x, it, area, btn) {
+    const ok = x.id === it.sub;
+    area.querySelectorAll('#subchoices .choice').forEach((c) => { c.disabled = true; });
+    btn.classList.add(ok ? 'right' : 'wrong');
+    if (ok) score++;
+    reveal(it, area, ok ? '✔ Spot on!' : `✘ It was ${FAM(it.family).subs.find((y) => y.id === it.sub).name}.`, ok);
+  }
+  function reveal(it, area, headline, good) {
+    const fam = FAM(it.family), sub = fam.subs.find((y) => y.id === it.sub);
+    area.append(h('div', { class: 'feedback ' + (good ? 'good' : 'bad') }, headline,
+      h('p', {}, h('b', {}, sub.name + ': '), sub.def), h('p', { class: 'small' }, 'Full reply: ', h('i', {}, rbFull(fam, it.body)))),
+      h('div', { class: 'row-actions' }, h('button', { class: 'btn', onclick: () => { i++; paint(); } }, i + 1 >= N ? 'See results' : 'Next →')));
+  }
+  async function finish() {
+    const max = N * 2, xp = Math.round((score / max) * 60);
+    body.replaceChildren(h('div', { class: 'result' }, h('h2', {}, score === max ? 'Perfect round! 🏆' : score >= 12 ? 'Sharp ears! 💪' : 'Keep practising! 🔎'),
+      h('div', { class: 'score' }, `${score} / ${max}`), h('p', { class: 'muted' }, 'One point for the starter, one for the exact type.'),
+      h('div', { class: 'row-actions', style: 'justify-content:center' }, h('button', { class: 'btn gold', onclick: nameView }, 'Play again'), h('a', { class: 'btn ghost', href: '#/lab', style: 'text-decoration:none' }, 'Try the Rebuttal Lab'))));
+    await award('name', 'name:' + uid(), xp);
+  }
+  paint();
+}
+
+const labKey = () => 'da_lab_' + (S.me ? S.me.id : 0);
+function labDone() { try { return new Set(JSON.parse(localStorage.getItem(labKey()) || '[]')); } catch (e) { return new Set(); } }
+function labMark(c, f) { try { const d = labDone(); d.add(c + ':' + f); localStorage.setItem(labKey(), JSON.stringify([...d])); } catch (e) {} }
+
+async function labView(id) {
+  await loadMe();
+  const lc = id ? C.LAB_CASES.find((x) => x.id === id) : null;
+  if (!lc) {
+    const done = labDone();
+    mount(pupilShell(h('div', {},
+      h('div', { class: 'panel' }, h('h2', {}, '🥊 Rebuttal Lab'), h('p', {}, 'Read an argument, pick a sentence starter, and hit back. Try all three starters on the same argument to feel how each one works.')),
+      h('div', { class: 'grid c2', style: 'margin-top:14px' }, C.LAB_CASES.map((c, n) => h('a', { class: 'case', href: '#/lab/' + c.id, style: `--c:${c.side === 'Proposition' ? '#3a6ea5' : '#d9482b'}` },
+        h('span', { class: 'tag ' + sideClass(c.side) }, c.side + ' speaks'),
+        h('h3', { style: 'margin:8px 0 2px' }, `Lab ${n + 1}: ${c.title}`), h('div', { class: 'small muted' }, c.motion),
+        h('div', { class: 'chips', style: 'margin-top:8px' }, C.RB_FAMILIES.map((f) => { const ok = done.has(c.id + ':' + f.id); return h('span', { class: 'chip' + (ok ? ' term' : '') }, (ok ? '✔ ' : '') + f.starter); })))))), '/lab'));
+    return;
+  }
+  const mySide = otherSide(lc.side), body = h('div', { class: 'panel' });
+  mount(pupilShell(body, '/lab'));
+  let fam = null, text = '', checked = false, sent = false;
+  const argEl = () => h('div', {}, h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(lc.side) }, lc.side + ' speaks'), h('span', { class: 'motion' }, lc.motion)),
+    ['point', 'cause', 'effect'].map((k) => h('div', { class: 'brick-row open', style: brickStyle(k) },
+      h('span', { class: 'bl' }, `${C.BRICKS[k].icon} ${C.BRICKS[k].label.toUpperCase()}`), h('span', { class: 'bt' }, lc.argument[k]))));
+  function paint() {
+    const head = [h('a', { href: '#/lab', class: 'small' }, '← All lab cases'), h('h2', {}, lc.title), argEl()];
+    if (!fam) {
+      body.replaceChildren(...head, h('h3', { style: 'margin-top:16px' }, `You are the ${mySide}. Which starter will you use?`),
+        ...C.RB_FAMILIES.map((f) => h('button', { type: 'button', class: 'starterpick', style: `--c:${f.color};--on:${f.on}`, onclick: () => { fam = f; text = ''; paint(); } },
+          h('b', {}, `${f.icon} ${f.starter}…`), h('span', {}, f.plain))));
+      return;
+    }
+    if (!checked) {
+      const note = h('div', { class: 'checks' });
+      const btn = h('button', { class: 'btn gold', disabled: true, onclick: check }, 'Check my rebuttal');
+      const ta = h('textarea', { 'aria-label': 'Your rebuttal', placeholder: 'Finish the sentence, then add a reason…', value: text });
+      const refresh = () => {
+        const n = words(text), ok = n >= 10; btn.disabled = !ok;
+        let tip = null;
+        if (!ok) tip = h('div', { class: 't' }, `• Write at least 10 words after the starter (you have ${n}).`);
+        else if (!/(because|since|\bso\b|which|therefore|only|while|but)/i.test(text)) tip = h('div', { class: 'muted' }, '• Tip: add a reason. Why is this true?');
+        note.replaceChildren(tip || h('div', { class: 'g' }, '✔ Looks good'));
+      };
+      ta.addEventListener('input', () => { text = ta.value; refresh(); });
+      body.replaceChildren(...head,
+        h('div', { class: 'row-actions', style: 'margin:14px 0 0' }, starterTag(fam), h('span', { class: 'small muted', style: 'align-self:center' }, 'Your starter is the BUT in SAY → BUT → BECAUSE → SO.')),
+        h('div', { class: 'prefix', style: `--c:${fam.color};--on:${fam.on}` }, prefixOf(fam) + ' …'), ta, note,
+        h('div', { class: 'row-actions between' }, h('button', { class: 'btn ghost', onclick: () => { fam = null; paint(); } }, '← Other starter'), btn));
+      refresh();
+      return;
+    }
+    const others = C.RB_FAMILIES.filter((f) => f.id !== fam.id);
+    const sendBtn = h('button', { class: 'btn ghost', disabled: sent, onclick: () => send(sendBtn) }, sent ? 'Sent ✔' : 'Send to my teacher');
+    body.replaceChildren(...head, h('div', { class: 'feedback good', style: 'margin-top:14px' }, '✔ Rebuttal checked!'),
+      h('h3', {}, 'You wrote'), sayLine('You say', rbFull(fam, text.trim())),
+      h('h3', {}, 'A model reply with the same starter'), sayLine('You say', h('mark', { style: `--c:${fam.color}` }, prefixOf(fam)), ' ', lc.models[fam.id]),
+      h('details', {}, h('summary', {}, 'See the other two ways to hit back'),
+        others.map((f) => sayLine('You say', h('mark', { style: `--c:${f.color}` }, prefixOf(f)), ' ', lc.models[f.id]))),
+      h('div', { class: 'row-actions' },
+        h('button', { class: 'btn gold', onclick: () => { fam = null; checked = false; sent = false; text = ''; paint(); } }, 'Try another starter'), sendBtn,
+        h('a', { class: 'btn ghost', href: '#/lab', style: 'text-decoration:none' }, 'More cases')));
+  }
+  async function check() { checked = true; labMark(lc.id, fam.id); paint(); await award('lab', `lab:${lc.id}:${fam.id}`, 15); }
+  async function send(btn) {
+    btn.disabled = true;
+    try {
+      const r = await api('/submissions', { method: 'POST', body: { kind: 'rebuttal', motion: lc.motion, side: mySide, payload: { labId: lc.id, starter: fam.id, text: rbFull(fam, text.trim()) } } });
+      if (S.me) { S.me.xp = r.xp; refreshChip(); }
+      sent = true; btn.textContent = 'Sent ✔'; toast(r.awarded ? `Sent! +${r.awarded} XP` : 'Sent to your teacher', 'gain');
+    } catch (e) { toast(e.message, 'err'); btn.disabled = false; }
+  }
+  paint();
+}
+
+/* ============================= pupil: my work ====================== */
+function substantiveEl(p) {
+  return h('div', {},
+    p.define ? h('div', { class: 'callout' }, h('b', {}, 'Definitions: '), p.define) : null,
+    p.context ? h('div', { class: 'callout' }, h('b', {}, 'Context: '), p.context) : null,
+    C.BRICK_ORDER.map((k) => h('div', { class: 'brick-row open', style: brickStyle(k) }, h('span', { class: 'bl' }, `${C.BRICKS[k].icon} ${C.BRICKS[k].label.toUpperCase()}`), h('span', { class: 'bt' }, (p.bricks || {})[k] || ''))));
+}
+function rebuttalEl(p) {
+  if (p.labId) return labPayloadEl(p);
+  const sc = C.SCENARIOS.find((x) => x.id === p.scenarioId);
+  return h('div', {},
+    sc ? h('div', { class: 'callout' }, h('b', {}, `Case: ${sc.title}. `), `${sc.side} argument on “${sc.motion}”. Cracked brick: `, h('b', {}, C.BRICKS[sc.crack].label), `. Pupil picked: ${p.crack ? C.BRICKS[p.crack].label : '—'} (${p.tries || 0} wrong ${p.tries === 1 ? 'try' : 'tries'} before finding it).`) : null,
+    [['SAY', p.say], ['BUT', p.but], ['BECAUSE', p.because], ['SO', p.so]].map(([l, t]) => h('div', { class: 'brick-row open', style: '--c:#1f2a44;--on:#fff' }, h('span', { class: 'bl' }, l), h('span', { class: 'bt' }, t || ''))));
+}
+async function workView() {
+  await loadMe();
+  const { submissions } = await api('/submissions/mine');
+  const list = submissions.length ? submissions.map((s) => {
+    const det = h('div', { style: 'display:none;margin-top:10px' }, s.kind === 'substantive' ? substantiveEl(s.payload) : rebuttalEl(s.payload));
+    return h('div', { class: 'panel', style: 'margin-bottom:12px' },
+      h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(s.side) }, s.side), h('span', { class: 'tag', style: 'background:#1f2a44' }, s.kind === 'substantive' ? 'Substantive' : 'Rebuttal'),
+        s.status === 'reviewed' ? h('span', { class: 'tag ok' }, 'Reviewed') : h('span', { class: 'tag wait' }, 'Waiting'), h('span', { class: 'small muted' }, fmtDate(s.created_at))),
+      h('div', { class: 'motion', style: 'font-family:Georgia,serif;font-weight:700' }, s.motion),
+      s.stars ? h('div', { 'aria-label': `${s.stars} out of 4 stars`, style: 'color:#f2a900;font-size:1.3rem' }, '★'.repeat(s.stars) + '☆'.repeat(4 - s.stars)) : null,
+      s.feedback ? h('div', { class: 'callout' }, h('b', {}, 'Teacher feedback: '), s.feedback) : null,
+      h('button', { class: 'btn small ghost', onclick: (e) => { const open = det.style.display === 'none'; det.style.display = open ? 'block' : 'none'; e.currentTarget.textContent = open ? 'Hide' : 'Read what I wrote'; } }, 'Read what I wrote'), det);
+  }) : [h('div', { class: 'panel' }, 'Nothing here yet. Build an argument in the ', h('a', { href: '#/build' }, 'Workshop'), ' or reply to a case in the ', h('a', { href: '#/arena' }, 'Arena'), '.')];
+  mount(pupilShell(h('div', {}, h('h1', {}, '📬 My Work'), ...list), '/work'));
+}
+
+/* ============================ teacher: classes ===================== */
+async function adminClasses() {
+  const [{ classes }, st] = await Promise.all([api('/admin/classes'), api('/admin/status').catch(() => null)]);
+  if (st) S.adminDefaults = st.defaults;
+  const name = h('input', { type: 'text', placeholder: 'e.g. 5 Integrity', maxlength: '60', 'aria-label': 'Class name' });
+  const rows = classes.map((c) => h('tr', {},
+    h('td', {}, h('b', {}, c.name)), h('td', {}, h('span', { class: 'code' }, c.code)), h('td', {}, String(c.pupils)),
+    h('td', {}, h('div', { class: 'row-actions', style: 'margin:0' },
+      h('button', { class: 'btn small', onclick: () => { S.selClass = c.id; location.hash = '#/a/pupils'; } }, 'Pupils'),
+      h('button', { class: 'btn small ghost', onclick: () => { S.selClass = c.id; location.hash = '#/a/cards'; } }, 'Cards'),
+      h('button', { class: 'btn small ghost', onclick: async () => { if (confirm('Make a new class code? Pupils will need the new code and printed cards will be out of date.')) { await api(`/admin/classes/${c.id}/regen`, { method: 'POST', body: {} }); render(); } } }, 'New code'),
+      h('button', { class: 'btn small danger', onclick: async () => { if (confirm(`Delete ${c.name}? This permanently removes its pupils and all their work.`)) { await api(`/admin/classes/${c.id}`, { method: 'DELETE' }); render(); } } }, 'Delete')))));
+  const page = h('div', {},
+    h('h1', {}, 'Classes'),
+    h('div', { class: 'panel' }, h('h3', {}, 'Create a class'), h('div', { class: 'filters' }, h('div', { style: 'flex:3' }, name), h('button', { class: 'btn gold', onclick: async () => {
+      try { await api('/admin/classes', { method: 'POST', body: { name: name.value } }); render(); } catch (e) { toast(e.message, 'err'); } } }, 'Create class'))),
+    h('div', { class: 'scroll-x', style: 'margin-top:16px' }, classes.length ? h('table', { class: 't' }, h('thead', {}, h('tr', {}, ['Class', 'Class code', 'Pupils', ''].map((x) => h('th', {}, x)))), h('tbody', {}, rows)) : h('div', { class: 'panel muted' }, 'No classes yet. Create your first one above.')));
+  mount(adminShell(page, '/a/classes'));
+}
+
+/* shared class picker for pupils / cards */
+async function classPicker(onChange) {
+  const { classes } = await api('/admin/classes');
+  if (!classes.length) return { classes, picker: h('p', { class: 'muted' }, 'Create a class first (Classes tab).'), id: null };
+  if (!classes.some((c) => c.id === S.selClass)) S.selClass = classes[0].id;
+  const sel = h('select', { 'aria-label': 'Class' }, classes.map((c) => h('option', { value: c.id, selected: c.id === S.selClass }, `${c.name} (${c.code})`)));
+  sel.addEventListener('change', () => { S.selClass = Number(sel.value); onChange(); });
+  return { classes, picker: h('div', { class: 'filters noprint' }, h('div', {}, h('label', {}, 'Class'), sel)), id: S.selClass };
+}
+
+/* ============================ teacher: pupils ====================== */
+async function adminPupils() {
+  const { picker, id } = await classPicker(render);
+  if (!id) return mount(adminShell(h('div', {}, h('h1', {}, 'Pupils'), picker), '/a/pupils'));
+  const { class: cls, pupils } = await api(`/admin/classes/${id}/pupils`);
+  const ta = h('textarea', { placeholder: 'Amy Tan\nBen Lim\nCheryl Ong, cheryl.o', rows: '6', 'aria-label': 'Pupil names' });
+  const out = h('div');
+  const add = h('button', { class: 'btn gold', onclick: async () => {
+    const lines = ta.value.split('\n').map((x) => x.trim()).filter(Boolean);
+    if (!lines.length) return toast('Paste at least one name.', 'err');
+    add.disabled = true;
+    try {
+      const r = await api(`/admin/classes/${id}/pupils`, { method: 'POST', body: { lines } });
+      ta.value = '';
+      out.replaceChildren(h('div', { class: 'notice' }, h('b', {}, `Added ${r.created.length} pupil${r.created.length === 1 ? '' : 's'}.`),
+        r.created.length ? h('div', { class: 'row-actions' }, h('button', { class: 'btn small', onclick: () => { location.hash = '#/a/cards'; } }, 'Print their cards')) : null,
+        r.skipped.length ? h('p', { class: 'small' }, 'Skipped: ' + r.skipped.map((s) => `${s.line} (${s.reason})`).join('; ')) : null));
+      setTimeout(render, 1200);
+    } catch (e) { toast(e.message, 'err'); add.disabled = false; }
+  } }, 'Add pupils');
+  const rows = pupils.map((p) => h('tr', {}, h('td', {}, p.display_name), h('td', { class: 'mono' }, p.username), h('td', {}, String(p.xp)), h('td', { class: 'small' }, fmtDate(p.last_login)),
+    h('td', {}, h('div', { class: 'row-actions', style: 'margin:0' },
+      h('button', { class: 'btn small ghost', onclick: async () => { if (confirm(`Reset ${p.display_name}'s XP and badges to zero? Their submitted work is kept.`)) { await api(`/admin/pupils/${p.id}/reset-xp`, { method: 'POST', body: {} }); render(); } } }, 'Reset XP'),
+      h('button', { class: 'btn small danger', onclick: async () => { if (confirm(`Remove ${p.display_name}? Their work is deleted too.`)) { await api(`/admin/pupils/${p.id}`, { method: 'DELETE' }); render(); } } }, 'Remove')))));
+  mount(adminShell(h('div', {}, h('h1', {}, 'Pupils'), picker,
+    h('div', { class: 'panel' }, h('h3', {}, `Bulk add to ${cls.name}`), h('p', { class: 'small muted' }, 'One pupil per line. Usernames are generated (e.g. amytan47). To choose one yourself, add a comma: “Cheryl Ong, cheryl.o”.'), ta, h('div', { class: 'row-actions' }, add), out),
+    h('div', { class: 'scroll-x', style: 'margin-top:16px' }, pupils.length ? h('table', { class: 't' }, h('thead', {}, h('tr', {}, ['Name', 'Username', 'XP', 'Last login', ''].map((x) => h('th', {}, x)))), h('tbody', {}, rows)) : h('div', { class: 'panel muted' }, 'No pupils in this class yet.'))), '/a/pupils'));
+}
+
+/* ============================ teacher: cards ======================= */
+async function adminCards() {
+  const { picker, id } = await classPicker(render);
+  if (!id) return mount(adminShell(h('div', {}, h('h1', {}, 'Cards'), picker), '/a/cards'));
+  const { class: cls, pupils } = await api(`/admin/classes/${id}/pupils`);
+  const url = location.origin;
+  mount(adminShell(h('div', {}, h('div', { class: 'noprint' }, h('h1', {}, 'Printable cards'), picker,
+    h('div', { class: 'row-actions', style: 'margin:0 0 14px' }, h('button', { class: 'btn gold', disabled: !pupils.length, onclick: () => window.print() }, '🖨 Print cards'),
+      h('span', { class: 'small muted', style: 'align-self:center' }, `${pupils.length} card${pupils.length === 1 ? '' : 's'} · cut along the dotted lines`))),
+    pupils.length ? h('div', { class: 'cards-sheet' }, pupils.map((p) => h('div', { class: 'idcard' },
+      h('div', { class: 'h' }, '⚖ Debate Academy'), h('div', { class: 'nm' }, p.display_name),
+      h('div', { class: 'row' }, h('span', {}, 'Username'), h('span', { class: 'val' }, p.username)),
+      h('div', { class: 'row' }, h('span', {}, 'Class code'), h('span', { class: 'val' }, cls.code)),
+      h('div', { class: 'row' }, h('span', {}, 'Class'), h('span', {}, cls.name)),
+      h('div', { class: 'url' }, 'Go to: ', h('b', {}, url))))) : h('div', { class: 'panel muted' }, 'This class has no pupils yet. Add some in the Pupils tab.')), '/a/cards'));
+}
+
+/* ============================ teacher: submissions ================= */
+async function adminSubs() {
+  const { classes } = await api('/admin/classes');
+  const F = S.subFilter = S.subFilter || { classId: '', kind: '', status: '' };
+  const q = new URLSearchParams(Object.entries(F).filter(([, v]) => v)).toString();
+  const { submissions } = await api('/admin/submissions' + (q ? '?' + q : ''));
+  const sel = (key, opts) => { const s = h('select', {}, opts.map(([v, l]) => h('option', { value: v, selected: String(F[key]) === String(v) }, l))); s.addEventListener('change', () => { F[key] = s.value; render(); }); return s; };
+  const rows = submissions.map((s) => h('tr', { class: 'click', onclick: () => openSub(s.id) },
+    h('td', {}, h('b', {}, s.display_name), h('div', { class: 'small muted' }, s.class_name)),
+    h('td', {}, s.kind === 'substantive' ? 'Substantive' : 'Rebuttal'), h('td', { class: 'small' }, s.motion), h('td', {}, h('span', { class: 'tag ' + sideClass(s.side) }, s.side)),
+    h('td', {}, s.status === 'reviewed' ? h('span', { class: 'tag ok' }, 'Reviewed') : h('span', { class: 'tag wait' }, 'New'), s.stars ? ` ${'★'.repeat(s.stars)}` : ''), h('td', { class: 'small' }, fmtDate(s.created_at))));
+  mount(adminShell(h('div', {}, h('h1', {}, 'Submissions'),
+    h('div', { class: 'filters' },
+      h('div', {}, h('label', {}, 'Class'), sel('classId', [['', 'All classes'], ...classes.map((c) => [c.id, c.name])])),
+      h('div', {}, h('label', {}, 'Type'), sel('kind', [['', 'All types'], ['substantive', 'Substantive'], ['rebuttal', 'Rebuttal']])),
+      h('div', {}, h('label', {}, 'Status'), sel('status', [['', 'Any status'], ['submitted', 'Needs review'], ['reviewed', 'Reviewed']]))),
+    submissions.length ? h('div', { class: 'scroll-x' }, h('table', { class: 't' }, h('thead', {}, h('tr', {}, ['Pupil', 'Type', 'Motion', 'Side', 'Status', 'Sent'].map((x) => h('th', {}, x)))), h('tbody', {}, rows))) : h('div', { class: 'panel muted' }, 'No submissions match.')), '/a/subs'));
+}
+async function openSub(id) {
+  const { submission: s } = await api('/admin/submissions/' + id);
+  let stars = s.stars || 0;
+  const fb = h('textarea', { placeholder: 'What worked? What is one thing to improve next time?', value: s.feedback || '' });
+  const starBox = h('div', { class: 'stars', role: 'group', 'aria-label': 'Stars' });
+  const paintStars = () => starBox.replaceChildren(...[1, 2, 3, 4].map((n) => h('button', { type: 'button', class: n <= stars ? 'on' : '', 'aria-label': `${n} star${n > 1 ? 's' : ''}`, onclick: () => { stars = stars === n ? 0 : n; paintStars(); } }, '★')));
+  paintStars();
+  let close;
+  const body = h('div', {},
+    h('div', { class: 'sample-head' }, h('b', {}, s.display_name), h('span', { class: 'small muted' }, `${s.class_name} · ${s.username} · ${fmtDate(s.created_at)}`)),
+    h('div', { class: 'sample-head' }, h('span', { class: 'tag ' + sideClass(s.side) }, s.side), h('span', { class: 'motion' }, s.motion)),
+    s.kind === 'substantive' ? substantiveEl(s.payload) : rebuttalEl(s.payload),
+    h('h3', { style: 'margin-top:16px' }, 'Your feedback'), fb,
+    h('label', {}, 'Stars (each star is worth 15 XP to the pupil)'), starBox,
+    h('div', { class: 'row-actions between' },
+      h('button', { class: 'btn danger small', onclick: async () => { if (confirm('Delete this submission permanently?')) { await api('/admin/submissions/' + id, { method: 'DELETE' }); close(); render(); } } }, 'Delete'),
+      h('button', { class: 'btn gold', onclick: async () => { try { await api('/admin/submissions/' + id, { method: 'PATCH', body: { feedback: fb.value, stars } }); toast('Feedback saved', 'gain'); close(); render(); } catch (e) { toast(e.message, 'err'); } } }, 'Save feedback')));
+  close = modal(s.kind === 'substantive' ? 'Substantive' : 'Rebuttal', body);
+}
+
+/* ============================ teacher: motions ===================== */
+async function adminMotions() {
+  const [{ motions }, { classes }] = await Promise.all([api('/admin/motions'), api('/admin/classes')]);
+  const text = h('input', { type: 'text', maxlength: '300', placeholder: 'This House would…' });
+  const kind = h('select', {}, h('option', { value: 'policy' }, 'Rule (THW…)'), h('option', { value: 'opinion' }, 'Opinion (THBT…)'));
+  const cls = h('select', {}, h('option', { value: '' }, 'All classes'), classes.map((c) => h('option', { value: c.id }, c.name)));
+  const hint = h('input', { type: 'text', maxlength: '400', placeholder: 'Optional hint pupils will see, e.g. “Think about Singapore.”' });
+  const rows = motions.map((m) => h('tr', {}, h('td', {}, m.text, m.hint ? h('div', { class: 'small muted' }, m.hint) : null), h('td', {}, m.kind === 'policy' ? 'Rule' : 'Opinion'), h('td', {}, m.class_name || 'All classes'),
+    h('td', {}, h('button', { class: 'btn small danger', onclick: async () => { if (confirm('Delete this motion?')) { await api('/admin/motions/' + m.id, { method: 'DELETE' }); render(); } } }, 'Delete'))));
+  mount(adminShell(h('div', {}, h('h1', {}, 'Custom motions'),
+    h('div', { class: 'panel' }, h('p', { class: 'small muted' }, 'Pupils always see the built-in motions. Add your own here and they appear in the Workshop.'),
+      h('label', {}, 'Motion'), text, h('div', { class: 'filters' }, h('div', {}, h('label', {}, 'Type'), kind), h('div', {}, h('label', {}, 'Visible to'), cls)), h('label', {}, 'Hint (optional)'), hint,
+      h('div', { class: 'row-actions' }, h('button', { class: 'btn gold', onclick: async () => {
+        try { await api('/admin/motions', { method: 'POST', body: { text: text.value, kind: kind.value, hint: hint.value, classId: cls.value || null } }); render(); } catch (e) { toast(e.message, 'err'); } } }, 'Add motion'))),
+    h('div', { class: 'scroll-x', style: 'margin-top:16px' }, motions.length ? h('table', { class: 't' }, h('thead', {}, h('tr', {}, ['Motion', 'Type', 'Visible to', ''].map((x) => h('th', {}, x)))), h('tbody', {}, rows)) : h('div', { class: 'panel muted' }, 'No custom motions yet.'))), '/a/motions'));
+}
+
+/* ============================== router ============================= */
+const routes = {
+  '/login': loginView, '/home': homeView, '/learn': learnView, '/toolkit': toolkitView, '/name': nameView, '/sort': sortView, '/order': orderView, '/build': buildView, '/work': workView,
+  '/a/classes': adminClasses, '/a/pupils': adminPupils, '/a/cards': adminCards, '/a/subs': adminSubs, '/a/motions': adminMotions,
+};
+async function render() {
+  let path = location.hash.slice(1) || '';
+  if (!S.token) path = '/login';
+  else if (!path || path === '/login') path = S.role === 'admin' ? '/a/classes' : '/home';
+  else if (S.role === 'admin' && !path.startsWith('/a/')) path = '/a/classes';
+  else if (S.role !== 'admin' && path.startsWith('/a/')) path = '/home';
+  if (location.hash.slice(1) !== path) { history.replaceState(null, '', '#' + path); }
+  try {
+    const m = path.match(/^\/arena(?:\/([\w-]+))?$/);
+    const lm = path.match(/^\/lab(?:\/([\w-]+))?$/);
+    if (m) await arenaView(m[1]);
+    else if (lm) await labView(lm[1]);
+    else await (routes[path] || (S.role === 'admin' ? adminClasses : homeView))();
+  } catch (e) {
+    if (!S.token) return;
+    mount(h('main', {}, h('div', { class: 'panel' }, h('h2', {}, 'Oops'), h('p', {}, e.message || 'Something went wrong.'), h('button', { class: 'btn', onclick: render }, 'Try again'))));
+  }
+}
+window.addEventListener('hashchange', render);
+render();
+})();
+</script>
+</body>
+</html>
